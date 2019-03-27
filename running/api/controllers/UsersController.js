@@ -64,7 +64,7 @@ module.exports = {
      //打印键值对中的值
     // console.log(arg1.id);
     console.log(req.allParams())
-    let rows = await Admin.create({ zh: 'lcjtmp6@163.com1', nc: '六六六1', pwd: '6661' });
+    let rows = await Admin.create({ zh: 'lcjtmp6@163.com1', nc: '六六六1', pwd: '6661' }).fetch();
     // await 解决异步问题
     // fetch(); 返回刚才的数据
     console.log(rows);
