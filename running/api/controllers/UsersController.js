@@ -64,7 +64,7 @@ module.exports = {
      //打印键值对中的值
     // console.log(arg1.id);
     console.log(req.allParams())
-    let rows = await Admin.create({ zh: 'lcjtmp6@163.com1', nc: '六六六1', pwd: '6661' }).fetch();
+    let rows = await Admin.create({ zh: 'lcjtmp6@163.com1', nc: '六六六1', pwd: '6661' });
     // await 解决异步问题
     // fetch(); 返回刚才的数据
     console.log(rows);
@@ -88,7 +88,7 @@ module.exports = {
       { zh: 'lcjtmp2@163.com1', nc: 'bbbb1', pwd: '6661' },
       { zh: 'lcjtmp3@163.com1', nc: 'cccc1', pwd: '6661' }
     ];
-    let rows = await Admin.createEach(data).fetch();
+    let rows = await Admin.createEach(data);
     console.log(rows);
     return res.send(rows);
   },
@@ -104,14 +104,14 @@ module.exports = {
 
   //更新
   update: async function (req, res) {
-    let rows = await Admin.update({ zh: 'lcjtmp6@163.com' }, { nc: '我是改过的', pwd: '333' }).fetch();
+    let rows = await Admin.update({ zh: 'lcjtmp6@163.com' }, { nc: '我是改过的', pwd: '333' });
     console.log(rows); //返回一个数组，哪怕是一条数据,是被更新的数据
     return res.send(rows);
   },
 
   //删除
   delete: async function (req, res) {
-     let rows = await Admin.destroy({ id: 5 }).fetch();
+     let rows = await Admin.destroy({ id: 5 });
      console.log(rows); //返回一个数组，哪怕是一条数据,是被删除的那条数据
      return res.send(rows);
   },
