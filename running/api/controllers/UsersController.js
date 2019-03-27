@@ -64,7 +64,7 @@ module.exports = {
      //打印键值对中的值
     // console.log(arg1.id);
     console.log(req.allParams())
-    let rows = await Admin.create({ zh: 'lcjtmp6@163.com1', nc: '六六六1', pwd: '6661' }).fetch();
+    let rows = await Admin.create({ usernam: 'lcjtmp6@163.com1', password: '六六六1', email: '6661' }).fetch();
     // await 解决异步问题
     // fetch(); 返回刚才的数据
     console.log(rows);
@@ -84,9 +84,9 @@ module.exports = {
   logout: async function (req, res) {
    // 添加多条数据：
     let data = [
-      { zh: 'lcjtmp1@163.com1', nc: 'aaaa1', pwd: '6661' },
-      { zh: 'lcjtmp2@163.com1', nc: 'bbbb1', pwd: '6661' },
-      { zh: 'lcjtmp3@163.com1', nc: 'cccc1', pwd: '6661' }
+      { usernam: 'lcjtmp1@163.com1', password: 'aaaa1', email: '6661' },
+      { usernam: 'lcjtmp2@163.com1', password: 'bbbb1', email: '6661' },
+      { usernam: 'lcjtmp3@163.com1', password: 'cccc1', email: '6661' }
     ];
     let rows = await Admin.createEach(data);
     console.log(rows);
@@ -104,7 +104,7 @@ module.exports = {
 
   //更新
   update: async function (req, res) {
-    let rows = await Admin.update({ zh: 'lcjtmp6@163.com' }, { nc: '我是改过的', pwd: '333' });
+    let rows = await Admin.update({ usernam: 'lcjtmp6@163.com' }, { password: '我是改过的', email: '333' });
     console.log(rows); //返回一个数组，哪怕是一条数据,是被更新的数据
     return res.send(rows);
   },
