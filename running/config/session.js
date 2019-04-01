@@ -12,27 +12,33 @@
 module.exports.session = {
 
   /***************************************************************************
-  *                                                                          *
-  * Session secret is automatically generated when your new app is created   *
-  * Replace at your own risk in production-- you will invalidate the cookies *
-  * of your users, forcing them to log in again.                             *
-  *                                                                          *
-  ***************************************************************************/
+   *                                                                          *
+   * Session secret is automatically generated when your new app is created   *
+   * Replace at your own risk in production-- you will invalidate the cookies *
+   * of your users, forcing them to log in again.                             *
+   *                                                                          *
+   ***************************************************************************/
   secret: '016c5a8acada2117177c27ca8a2a3974',
+  cookie: {
+    path: '/Vigorous',
+    _expires: null,
+    originalMaxAge: null,
+    httpOnly: true
+  },
 
 
   /***************************************************************************
-  *                                                                          *
-  * Customize when built-in session support will be skipped.                 *
-  *                                                                          *
-  * (Useful for performance tuning; particularly to avoid wasting cycles on  *
-  * session management when responding to simple requests for static assets, *
-  * like images or stylesheets.)                                             *
-  *                                                                          *
-  * https://sailsjs.com/config/session                                       *
-  *                                                                          *
-  ***************************************************************************/
-  // isSessionDisabled: function (req){
+   *                                                                          *
+   * Customize when built-in session support will be skipped.                 *
+   *                                                                          *
+   * (Useful for performance tuning; particularly to avoid wasting cycles on  *
+   * session management when responding to simple requests for static assets, *
+   * like images or stylesheets.)                                             *
+   *                                                                          *
+   * https://sailsjs.com/config/session                                       *
+   *                                                                          *
+   ***************************************************************************/
+  // isSessionDisabled: function(req) {
   //   return !!req.path.match(req._sails.LOOKS_LIKE_ASSET_RX);
   // },
 

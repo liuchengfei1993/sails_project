@@ -5,18 +5,19 @@
  * @help        :: See https://sailsjs.com/docs/concepts/actions
  */
 
-var WXBizDataCrypt = require("./WXBizDataCrypt");
+var WXBizDataCrypt = require("../../assets/js/WXBizDataCrypt");
 var url = require('url');
+const http = require('https');
+
 module.exports = {
-  
+
 
   /**
    * `UsersController.lcf()`
    */
   //weChat running
-  lcf: async function (req, res) {
+  lcf: async function(req, res) {
 
-    const http = require('https');
 
     var appid = "wx43c1c9647ca0209f";
     var secret = "67b546c0e5af6496ec5b3b2e747ef25a";
@@ -45,29 +46,29 @@ module.exports = {
           var data = pc.decryptData(encryptedData, iv);
           step = data.stepInfoList;
           console.log(step);
-          
+
         });
       })
     // return res.json({
     //   todo: "暂无数据"
     // });
-      return res.json({step});
+    return res.json({ step });
   },
 
   /**
    * `UsersController.login()`
    */
-  login: async function (req, res) {
+  login: async function(req, res) {
     //获取get方法的参数
     // 添加：
-    //  var arg1 = url.parse(req.url, true).query;
-     //打印键值对中的值
+    var arg1 = url.parse(req.url, true).query;
+    //打印键值对中的值
     // console.log(arg1.id);
     console.log(req.allParams())
-    let rows = await Admin.create({ username: '周小青', password: 'ddddd1', email: 'lcjtmp4@163.com4' }).fetch();
+    let rows = await Admin.create({ username: arg1.username, password: arg1.password, email: arg1.email }).fetch();
     // await 解决异步问题
     // fetch(); 返回刚才的数据
-    console.log(rows);
+    sails.log(rows)
     return res.send(rows);
     //  自动接收数据并插入表中方式：
     // let reg_info = req.allParams();
@@ -81,57 +82,60 @@ module.exports = {
   /**
    * `UsersController.logout()`
    */
-  logout: async function (req, res) {
-   // 添加多条数据：
+  logout: async function(req, res) {
+    // 添加多条数据：
     let data = [
       { username: '王小虎', password: 'aaaa1', email: 'lcjtmp1@163.com1' },
       { username: '李小龙', password: 'bbbb1', email: 'lcjtmp2@163.com2' },
       { username: '张晓忠', password: 'cccc1', email: 'lcjtmp3@163.com3' }
     ];
-    let rows = await Admin.createEach(data);
+    let rows = await Admin.createEach(data).fetch();
     console.log(rows);
     return res.send(rows);
   },
 
   //查询
   index: async function(req, res) {
+    // var arg1 = url.parse(req.url, true).query
     let rs = await Admin.find({
-       id : {'<':10}
-     });
-     console.log(rs);
-     return res.send(rs);
+      where: { id: 1 }
+    });
+    console.log(rs)
+    // console.log(rs.createdAt);
+    return res.send(rs);
   },
 
   //更新
-  update: async function (req, res) {
-    let rows = await Admin.update({ username: '孙小苗' }, { password: '111111111', email: 'sunxiaomiao@163.com' });
-    console.log(rows); //返回一个数组，哪怕是一条数据,是被更新的数据
-    return res.send(rows);
+  update: async function(req, res) {
+    let rows = await Admin.update({ id: '1' }, { username: '王小虎', password: '111111111', email: 'sunxiaomiao@163.com' }).fetch();
+    console.log(rows.length); //返回一个数组，哪怕是一条数据,是被更新的数据
+    let length = rows.length
+    return res.send(JSON.stringify(length));
   },
 
   //删除
-  delete: async function (req, res) {
-     let rows = await Admin.destroy({ id: 5 });
-     console.log(rows); //返回一个数组，哪怕是一条数据,是被删除的那条数据
-     return res.send(rows);
+  delete: async function(req, res) {
+    let rows = await Admin.destroy({ id: 5 });
+    console.log(rows); //返回一个数组，哪怕是一条数据,是被删除的那条数据
+    return res.send(rows);
   },
 
   //分页
-  paging: async function (req, res) {
-     let rs = await Admin.find().skip(2).limit(1);
-     console.log(rs);
-     return res.send(rs);
+  paging: async function(req, res) {
+    let rs = await Admin.find().skip(2).limit(1);
+    console.log(rs);
+    return res.send(rs);
   },
 
   //统计录数
-  acount: async function (req, res) {
-     let rs = await Admin.count();
-     console.log(rs); //返回数字
-     return res.send("ok");
+  acount: async function(req, res) {
+    let rs = await Admin.count();
+    console.log(rs); //返回数字
+    return res.send("ok");
   },
 
   //排序
-  sort: async function (req, res) {
+  sort: async function(req, res) {
     let rs = await Admin.find().sort('id desc');
     console.log(rs);
     return res.send(rs);
@@ -139,10 +143,27 @@ module.exports = {
 };
 
 //拦截器
-module.exports.policies = {
-    UserController: {
-      '*': 'isLoggedIn', //把所有的页面都拦截了
-      'delete': 'isAdmin',
-      'login': true //允许l访问ogin
-    }
+// module.exports.policies = {
+//     UserController: {
+//       '*': 'isLoggedIn', //把所有的页面都拦截了
+//       'delete': 'isAdmin',
+//       'login': true //允许l访问ogin
+//     }
+//   }
+
+var http = require('http')
+var querystring = require('querystring');
+var server = http.createServer(function(req, res) {
+  if (req.url == '/dopost' && req.method.toLowerCase == 'post') {
+    var allData = '';
+    req.addListener('data', function(chunk) {
+
+      allData += chunk
+    })
+    req.addListener('end', function() {
+      console.log(allData.toString);
+      var param = querystring.parse(allData); //可以直接解码
+      res.end(param.name)
+    })
   }
+})
