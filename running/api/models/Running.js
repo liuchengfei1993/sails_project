@@ -9,6 +9,19 @@ module.exports = {
 
   attributes: {
 
+    openId: {
+      type: 'string',
+      required: true,
+      allowNull: false,
+      unique: true,
+      // encrypt: true,
+    },
+    walletAddress: {
+      type: 'string',
+      required: true,
+      //默认值
+      // defaultsTo: 0
+    },
     todayStepNum: {
       type: 'number',
       // required: true,

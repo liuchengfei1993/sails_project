@@ -8,15 +8,25 @@
 module.exports = {
 
   attributes: {
+
+    openId: {
+      type: 'string',
+      required: true,
+      allowNull: false,
+      unique: true,
+      // encrypt: true,
+    },
     username: {
       type: 'string',
-      required: true
+      required: true,
+      maxLength: 64
     },
     password: {
       type: 'string',
       required: true,
       //自动加密
-      // encrypt: true
+      encrypt: true,
+      maxLength: 64
     },
     inviter: {
       type: 'string',
@@ -30,7 +40,7 @@ module.exports = {
       type: 'string',
       required: true,
       //自动加密
-      // encrypt: true
+      encrypt: true
     }
   },
 };

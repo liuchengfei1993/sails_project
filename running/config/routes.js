@@ -34,8 +34,9 @@ module.exports.routes = {
   'POST /Vigorous/user/login': { action: 'Vigorous/user/login' },
 
   //获取微信运动数据接口，捐赠步数，捐赠金额接口
-  'POST /Vigorous/running/weChatRunning': { action: 'Vigorous/running/weChatRunning' },
-  'POST /Vigorous/running/donateStep': { action: 'Vigorous/running/donateStep' },
+  'POST /Vigorous/running/weChatRunning': { action: 'Vigorous/todayrun/weChatRunning' },
+  'POST /Vigorous/running/donateSteps': { action: 'Vigorous/todayrun/donateSteps' },
+  'POST /Vigorous/running/activate': { action: 'Vigorous/todayrun/activate' },
 
   //获取公益组织,公益项目接口
   'GET /Vigorous/CRCRE/CRCREimformation': { action: 'Vigorous/CRCRE/CRCREimformation' },
@@ -43,10 +44,13 @@ module.exports.routes = {
 
   //查询用户对应的钱包地址，钱包秘钥，钱包里的积分余额，冻结数量
   'GET /Vigorous/inquire/userInformation': { action: 'Vigorous/Inquire/userInformation' },
+
   //查询指定用户的排名，捐出步数和捐赠金额
   'POST /Vigorous/inquire/ranking': { action: 'Vigorous/inquire/ranking' },
+
   //查询指定用户的累计运动步数
-  'POST /Vigorous/inquire/': { action: '' },
+  'POST /Vigorous/inquire/allStep': { action: 'Vigorous/inquire/allStep' },
+
   //查询今日所有用户捐赠排行榜
   'GET /Vigorous/inquire/donateList': { action: 'Vigorous/inquire/donateList' }
 };

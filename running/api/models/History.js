@@ -9,6 +9,13 @@ module.exports = {
 
   attributes: {
 
+    openId: {
+      type: 'string',
+      required: true,
+      allowNull: false,
+      // unique: true,
+      // encrypt: true,
+    },
     timestamp: {
       type: 'number',
       required: true

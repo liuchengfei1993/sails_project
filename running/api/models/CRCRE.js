@@ -9,21 +9,10 @@ module.exports = {
 
   attributes: {
 
-    // fetchRecordsOnUpdate: true,
-    createdAt: {
-      type: 'number',
-      autoCreatedAt: true,
-    },
-    updatedAt: {
-      type: 'number',
-      autoUpdatedAt: true,
-    },
-    id: {
-      type: 'number',
-      autoIncrement: true,
-    },
+
     projectName: {
       type: 'string',
+      required: true
     },
     position: {
       type: 'string',
