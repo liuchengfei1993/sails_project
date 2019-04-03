@@ -12,7 +12,7 @@ describe("InquireController", function() {
         .send()
         .expect(200)
         .end(function(err, results) {
-          should(results.text.length).be.exactly(232);
+          should(results.text).be.exactly(228);
           done();
         })
     })
@@ -22,10 +22,10 @@ describe("InquireController", function() {
     it("shoud get text.length", function(done) {
       request(sails.hooks.http.app)
       agent.post("/Vigorous/inquire/ranking")
-        .send({ walletAddress: "jHcEbd59Wi1vSFpMJHrBW3EA53S2yvrErf" })
+        .send({ walletAddress: "jUPg46e9U8dwiCWTCXfHNXnoNgHkv1aqz8" })
         .expect(200)
         .end(function(err, results) {
-          should(results.text.length).be.exactly(279)
+          should(results.text).be.exactly(279)
           done()
         })
     })
@@ -46,13 +46,13 @@ describe("InquireController", function() {
 
   //查询指定用户的累计运动步数
   describe('allStep', function() {
-    it('should get Not find', function(done) {
+    it('should get 暂无数据', function(done) {
       request(sails.hooks.http.app)
       agent.post("/Vigorous/inquire/allStep")
-        .send({ walletAddress: "jHcEbd59Wi1vSFpMJHrBW3EA53S2yvrErs" })
+        .send({ walletAddress: "jUPg46e9U8dwiCWTCXfHNXnoNgHkv1aqz8" })
         .expect(404)
         .end(function(err, results) {
-          should(results.text).be.exactly("Not find")
+          should(results.text).be.exactly("暂无数据")
           done()
         })
     })

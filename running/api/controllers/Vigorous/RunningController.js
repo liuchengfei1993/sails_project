@@ -70,11 +70,11 @@ module.exports = {
         //判断用户是否是第一次捐赠
         //查询钱包里面是否有积分
         let findPoint = await Walletpoint.find({
-          where: { openId: openId }
+          openId: openId
         })
         console.log(findPoint[0].status)
+        //如果钱包状态为false
         if (findPoint[0].status === false) {
-          // var rows = await Running.create({ openId: openId, todayStepNum: todayStep, donateStep: 0, donateMoney: 0 }).fetch();
           return res.send("请先激活钱包");
         } else {
           //更新今日数据
@@ -86,7 +86,7 @@ module.exports = {
         }
         //查询是否是受邀用户
         let findInvitation = await User.find({
-          where: { openId: openId }
+          openId: openId
         })
         var inviterOpenId = findInvitation[0].inviter
         console.log(inviterOpenId)
@@ -95,16 +95,45 @@ module.exports = {
         } else {
           //给受邀人发积分
           var oldpoint = await Walletpoint.find({
-            where: { openId: findInvitation[0].walletAddress }
+            openId: findInvitation[0].walletAddress
           })
-          let rewww = await Walletpoint.update({ walletAddress: findInvitation[0].walletAddress }, { point: oldpoint[0].point + 100, tips: "邀请获得100积分" }).fetch()
-          return res.send("捐赠成功，捐赠金额为：" + donateStep / 10000 + "元");
+          if (walletAddress[0].walletAddress !== undefined || "") {
+            let rewww = await Walletpoint.update({ walletAddress: findInvitation[0].walletAddress }, { point: oldpoint[0].point + 100, tips: "邀请获得100积分" }).fetch()
+            return res.send("捐赠成功，捐赠金额为：" + donateStep / 10000 + "元");
+          } else {
+            return res.send("捐赠成功，捐赠金额为：" + donateStep / 10000 + "元");
+          }
         }
       } else {
         return res.status(404).send("缺少参数")
       }
     } else {
       return res.status(400).send("会话过期，请重新登录")
+    }
+  },
+
+  //激活接口
+  activite: async function(req, res) {
+    //参数，钱包地址
+    var walletAddress = req.body.walletAddress;
+    if (walletAddress) {
+      var findResult = await Walletpoint.find({
+        walletAddress: walletAddress
+      })
+      if (findResult.length !== 0) {
+        if (findResult[0].status === false) {
+          return res.status(200).send("请勿重复操作")
+        } else {
+          await Walletpoint.update({
+            walletAddress: walletAddress
+          }, { status: true })
+          return req.status(200).send("激活成功")
+        }
+      } else {
+        return req.status(404).send("该钱包地址未在本服务器注册")
+      }
+    } else {
+      return req.status(400).send("参数错误")
     }
   }
 };

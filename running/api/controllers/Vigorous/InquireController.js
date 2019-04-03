@@ -33,7 +33,7 @@ module.exports = {
         var exHosts = ['ewdjbbl8jgf.jccdex.cn', 'e5e9637c2fa.jccdex.cn', 'e9joixcvsdvi4sf.jccdex.cn', 'eaf28bebdff.jccdex.cn']
         sails.log("exHosts:" + exHosts[Math.floor(Math.random() * 5)])
         //查询冻结
-        http.get("https://" + exHosts[Math.floor(Math.random() * 5)] + '/exchange/balances?address=' + "jPTuyyBYoW1Z1R8ZEK1vmfCn4bvnr5CPjY",
+        http.get("https://" + exHosts[Math.floor(Math.random() * 5)] + '/exchange/balances?address=' + walletAddress,
           function(req, res) {
             let html = '';
             req.on('data', function(data) {
@@ -81,7 +81,7 @@ module.exports = {
       })
       sails.log(findResult);
       sails.log("length:" + findResult.length)
-      return res.send({
+      return res.status(200).send({
         ranking: findResult.length + 1,
         donateStep: walletFind[0].donateStep,
         donateMoney: walletFind[0].donateMoney
@@ -103,7 +103,7 @@ module.exports = {
     }).sort('donateStep desc').limit(10).skip((page - 1) * 10)
     sails.log(findResult);
     if (findResult.length !== 0) {
-      return res.send(findResult) //实际
+      return res.status.send(findResult) //实际
     } else {
       return res.status(200).send("暂无数据");
     }
@@ -124,7 +124,11 @@ module.exports = {
       var findResult = await History.find({
         openId: openId[0].openId
       })
-      return res.send(findResult)
+      if (findResult.length == 0) {
+        return res.status(200).send("暂无数据")
+      } else {
+        return res.status(200).send(findResult)
+      }
     } else {
       return res.status(404).send("Not find");
     }
