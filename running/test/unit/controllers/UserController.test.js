@@ -9,7 +9,7 @@ describe('UserController', function() {
     it('should get 该号码已被注册', function(done) {
       request(sails.hooks.http.app)
         .post('/Vigorous/user/register')
-        .send({ openId: 'tssat', password: 'test', username: "test" })
+        .send({ openId: 'test2', password: 'test', username: "test" })
         .expect(200)
         .expect("该号码已被注册", done);
     });

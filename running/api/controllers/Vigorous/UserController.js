@@ -42,7 +42,8 @@ module.exports = {
         //第一次建立Wallepoint表
         await Walletpoint.create({ openId: date.openId, walletAddress: wallet.address })
         //第一次建立Running表
-        await Running.create({ openId: date.openId });
+        var running = await Running.create({ openId: date.openId, walletAddress: wallet.address }).fetch();
+        sails.log(running);
         //第一次建立History表
         // await History.create({ openId: date.openId, timestamp: new Date() });
         return res.send('注册成功')
