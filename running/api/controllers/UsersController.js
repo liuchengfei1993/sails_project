@@ -147,23 +147,23 @@ module.exports = {
 //     UserController: {
 //       '*': 'isLoggedIn', //把所有的页面都拦截了
 //       'delete': 'isAdmin',
-//       'login': true //允许l访问ogin
+//       'login': true //允许访问ogin
 //     }
 //   }
 
-var http = require('http')
-var querystring = require('querystring');
-var server = http.createServer(function(req, res) {
-  if (req.url == '/dopost' && req.method.toLowerCase == 'post') {
-    var allData = '';
-    req.addListener('data', function(chunk) {
+// var http = require('http')
+// var querystring = require('querystring');
+// var server = http.createServer(function(req, res) {
+//   if (req.url == '/dopost' && req.method.toLowerCase == 'post') {
+//     var allData = '';
+//     req.addListener('data', function(chunk) {
 
-      allData += chunk
-    })
-    req.addListener('end', function() {
-      console.log(allData.toString);
-      var param = querystring.parse(allData); //可以直接解码
-      res.end(param.name)
-    })
-  }
-})
+//       allData += chunk
+//     })
+//     req.addListener('end', function() {
+//       console.log(allData.toString);
+//       var param = querystring.parse(allData); //可以直接解码
+//       res.end(param.name)
+//     })
+//   }
+// })

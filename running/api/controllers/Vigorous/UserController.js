@@ -13,17 +13,17 @@ module.exports = {
   //注册接口
   register: async function(req, res) {
     // 获取请求参数
-    var date = url.parse(req.url, true).query;
+    var date = req.body
     if (date.openId && date.password && date.username) {
       //判断用户是否已经注册
       var findResult = await User.find({
-        where: { openId: date.openId },
+        openId: date.openId
       })
       //写入数据库
       if (findResult.length === 0) {
         //生成钱包和密钥
         wallet = Wallet.generate();
-        console.log(wallet)
+        // console.log(wallet)
         //第一次建立User表
         let rows = await User.create({
           username: date.username,
@@ -35,10 +35,10 @@ module.exports = {
           secretKey: wallet.secret ||
             "null"
         }).fetch();
-        console.log(rows)
+        // console.log(rows)
         //在session中存入openId
         req.session.openId = date.openId;
-        console.log(req.session);
+        // console.log(req.session);
         //第一次建立Wallepoint表
         await Walletpoint.create({ openId: date.openId, walletAddress: wallet.address })
         //第一次建立Running表
@@ -50,26 +50,24 @@ module.exports = {
         return res.send("该号码已被注册")
       }
     } else {
-      return res.send("缺少参数")
+      return res.status(400).send("The request is invalid");
     }
   },
 
   //登录接口
   login: async function(req, res) {
-    var date = url.parse(req.url, true).query;
-    console.log(req.session)
-    if (req.session.openId || date.openId) {
+    var date = req.body
+    if (date.openId) {
       req.session.openId = date.openId;
       let findResult = await User.find({
-        where: { openId: req.session.openId }
+        openId: date.openId
       })
       if (findResult.length !== 0) {
-        console.log('登陆成功')
         return res.send(findResult[0].openId);
       }
       return res.send('请先注册！');
     } else {
-      return res.send('请先注册！')
+      return res.status(400).send("The request is invalid");
     }
   },
 };

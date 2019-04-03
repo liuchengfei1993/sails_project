@@ -9,21 +9,9 @@ module.exports = {
 
   attributes: {
 
-    // fetchRecordsOnUpdate: true,
-    createdAt: {
-      type: 'number',
-      autoCreatedAt: true,
-    },
-    updatedAt: {
-      type: 'number',
-      autoUpdatedAt: true,
-    },
-    id: {
-      type: 'number',
-      autoIncrement: true,
-    },
     organizationName: {
-      type: 'string'
+      type: 'string',
+      required: true
     },
     position: {
       type: 'string',
