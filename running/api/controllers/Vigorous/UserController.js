@@ -58,6 +58,7 @@ module.exports = {
   //登录接口
   login: async function(req, res) {
     var date = req.body
+    console.log(date);
     if (date.openId) {
       req.session.openId = date.openId;
       let findResult = await User.find({

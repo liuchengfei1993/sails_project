@@ -62,6 +62,7 @@ module.exports = {
     //获取本次请求的参数
     var date = req.body;
     var openId = req.session.openId
+    console.log(req.session)
     if (openId !== undefined || "") {
       if (date.todayStep && date.donateStep) {
         var todayStep = date.todayStep

@@ -220,11 +220,15 @@ module.exports = {
      * https://sailsjs.com/config/session#?the-session-id-cookie                *
      *                                                                          *
      ***************************************************************************/
+    secret: '016c5a8acada2117177c27ca8a2a3974',
     cookie: {
+      path: '/Vigorous',
+      _expires: null,
+      originalMaxAge: null,
+      httpOnly: true,
       secure: true,
       maxAge: 24 * 60 * 60 * 1000 * 10, // 24 hours
     },
-
   },
 
 
