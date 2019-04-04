@@ -34,9 +34,9 @@ module.exports.routes = {
   'POST /Vigorous/user/login': { action: 'Vigorous/user/login' },
 
   //获取微信运动数据接口，捐赠步数，捐赠金额接口
-  'POST /Vigorous/running/weChatRunning': { action: 'Vigorous/todayrun/weChatRunning' },
-  'POST /Vigorous/running/donateSteps': { action: 'Vigorous/todayrun/donateSteps' },
-  'POST /Vigorous/running/activate': { action: 'Vigorous/todayrun/activate' },
+  'POST /Vigorous/running/weChatRunning': { action: 'Vigorous/running/weChatRunning' },
+  'POST /Vigorous/running/donateSteps': { action: 'Vigorous/running/donateSteps' },
+  'POST /Vigorous/running/activate': { action: 'Vigorous/running/activate' },
 
   //获取公益组织,公益项目接口
   'GET /Vigorous/CRCRE/CRCREimformation': { action: 'Vigorous/CRCRE/CRCREimformation' },
