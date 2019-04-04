@@ -58,7 +58,7 @@ module.exports = {
   },
 
   //捐赠步数接口
-  donateStep: async function(req, res) {
+  donateSteps: async function(req, res) {
     //获取本次请求的参数
     var date = req.body;
     var openId = req.session.openId
@@ -113,7 +113,7 @@ module.exports = {
   },
 
   //激活接口
-  activite: async function(req, res) {
+  activate: async function(req, res) {
     //参数，钱包地址
     var walletAddress = req.body.walletAddress;
     if (walletAddress) {
