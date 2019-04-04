@@ -19,8 +19,6 @@
  * https://sailsjs.com/docs/concepts/deployment
  */
 
-NODE_ENV = production;
-
 module.exports = {
 
 
