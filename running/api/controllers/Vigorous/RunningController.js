@@ -155,7 +155,7 @@ module.exports = {
                         return req.feedback(200, {}, '激活成功')
                     }
                 } else {
-                    return req.feedback(200, {}, '该钱包地址未在本服务器注册')
+                    return req.feedback(200, {}, '请输入正确的钱包地址')
                 }
             } else {
                 return res.feedback(ResultCode.ERR_INVALID_CHANNEL.code, {}, ResultCode.ERR_INVALID_CHANNEL.msg)
