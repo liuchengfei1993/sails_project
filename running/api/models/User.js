@@ -16,7 +16,7 @@ module.exports = {
       unique: true,
       // encrypt: true,
     },
-    username: {
+    userName: {
       type: 'string',
       required: true,
       maxLength: 64

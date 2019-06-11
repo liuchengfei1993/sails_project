@@ -4,11 +4,6 @@
  * @description :: Server-side actions for handling incoming requests.
  * @help        :: See https://sailsjs.com/docs/concepts/actions
  */
-var url = require('url');
-var WXBizDataCrypt = require("../../../assets/js/WXBizDataCrypt");
-var handleStep = require("../../../assets/js/utils").handleStep
-// const http = require('https');
-
 
 
 module.exports = {
@@ -19,31 +14,30 @@ module.exports = {
      * @param { todayStep, donateStep, donateMoney } res
      */
     weChatRunning: async function(req, res) {
+
         try {
             //小程序ID
-            var appid = "wx43c1c9647ca0209f";
+            var appid = AppId.APP_ID;
             //小程序秘钥
-            var secret = "67b546c0e5af6496ec5b3b2e747ef25a";
+            var secret = AppId.APP_SECRET;
             //小程序openId
-            var openId = req.session.openId;
+            var openId = req.session.user.openId;
             //获取本次请求的code,session_key,openId,encryptedData(需要解密的数据),iv(解密初始向量)(请求带参)
             var data = req.body;
-            console.log(data);
             if (!Utils.isNal(data)) {
                 var session_key = data.session_key;
                 var openId = openId;
                 var encryptedData = data.encryptedData;
                 var iv = data.iv;
                 //数据解密
-                var pc = new WXBizDataCrypt(appid, session_key);
+                var pc = WXBizDataCrypt.WXBizDataCrypt(appid, session_key);
                 step = pc.decryptData(encryptedData, iv).stepInfoList;
                 //获取今日步数
-                console.log(step)
                 var todayStep = step[step.length - 1].step
                 var timestamp = step[step.length - 1].timestamp
                 // return res.json({ timestamp, todayStep });
                 //将数据写入到数据库中
-                if (openId !== "" || undefined) {
+                if (Utils.isNal(openId)) {
                     await Running.update({ openId: openId }, { todayStepNum: todayStep })
                     var donateData = await Running.find({
                         openId: openId
