@@ -12,51 +12,78 @@ module.exports = {
 
     /**
      * @description:注册接口
-     * @param {openId,username,password} req 
+     * @param { openId, userName, password inviter } req
      * @param {openId} res 
      */
-    register: async function(req, res) {
+    register: async function (req, res) {
         try {
-            // 获取请求参数
-            var date = req.body
-            if (!Utils.isNil(req.body)) {
-                //判断用户是否已经注册
-                var findResult = await User.find({
-                    openId: date.openId
-                })
-                //写入数据库
-                if (Utils.isNil(findResult)) {
-                    //生成钱包和密钥
-                    wallet = Wallet.generate();
-                    //第一次建立User表
-                    let rows = await User.create({
-                        username: date.username,
-                        password: date.password,
-                        openId: date.openId,
-                        inviter: date.inviter || "null",
-                        walletAddress: wallet.address ||
-                            "null",
-                        secretKey: wallet.secret ||
-                            "null"
-                    }).fetch();
-                    //在session中存入openId
-                    req.session.openId = date.openId;
-                    //第一次建立Wallepoint表
-                    await Walletpoint.create({ openId: date.openId, walletAddress: wallet.address })
-                    //第一次建立Running表
-                    var running = await Running.create({ openId: date.openId, walletAddress: wallet.address }).fetch();
-                    sails.log(running);
-                    return res.feedback(200, Utils.aesCrypto(date.openId), "注册成功")
-                } else {
-                    return res.feedback(200, {}, "该号码已被注册")
-                }
-            } else {
+            // var userName = req.body.userName;
+            var openId = req.body.openId;
+            // var password = req.body.password;
+            var inviter = req.body.inviter;
+            // if (Utils.isNil(userName)) {
+            //     sails.log.error(new Date().toISOString(),  ResultCode.ERR_HEADER_PARAMETERS.msg);
+            //     return res.feedback(ResultCode.ERR_HEADER_PARAMETERS.code, {}, ResultCode.ERR_HEADER_PARAMETERS.msg);
+            // }
+            if (Utils.isNil(openId)) {
+                sails.log.error(new Date().toISOString(),  ResultCode.ERR_HEADER_PARAMETERS.msg);
                 return res.feedback(ResultCode.ERR_HEADER_PARAMETERS.code, {}, ResultCode.ERR_HEADER_PARAMETERS.msg);
             }
+            // if (Utils.isNil(password)) {
+            //     sails.log.error(new Date().toISOString(),  ResultCode.ERR_HEADER_PARAMETERS.msg);
+            //     return res.feedback(ResultCode.ERR_HEADER_PARAMETERS.code, {}, ResultCode.ERR_HEADER_PARAMETERS.msg);
+            // }
+            try {
+                var findResult = await User.find({
+                    openId: openId
+                }).decrypt()
+            } catch (err) {
+                sails.log.error(new Date().toISOString(),  ResultCode.ERR_SYSTEM_DB.msg, err);
+                return res.feedback(ResultCode.ERR_SYSTEM_DB.code, {}, ResultCode.ERR_SYSTEM_DB.msg);
+            }
+            if (!Utils.isNil(findResult[0])) {
+                sails.log.error(new Date().toISOString(),  ResultCode.ERR_USER_EXISTS.msg);
+                return res.feedback(ResultCode.ERR_USER_EXISTS.code, {}, ResultCode.ERR_USER_EXISTS.msg)
+            }
+            //新建钱包
+            wallet = Wallet.generate();
+            try {
+                var createDate = await User.create({
+                    userName: userName,
+                    password: password,
+                    openId: openId,
+                    inviter: inviter || "null",
+                    walletAddress: wallet.address ||
+                        "null",
+                    secretKey: wallet.secret ||
+                        "null"
+                }).fetch().decrypt();
+
+            } catch (err) {
+                sails.log.error(new Date().toISOString(),  err);
+                return res.feedback(ResultCode.ERR_SYSTEM_DB.code, {}, ResultCode.ERR_SYSTEM_DB.msg);
+            }
+            try {
+                await Walletpoint.create({ openId: openId, walletAddress: wallet.address })
+            } catch (err) {
+                sails.log.error(new Date().toISOString(),  err);
+                return res.feedback(ResultCode.ERR_SYSTEM_DB.code, {}, ResultCode.ERR_SYSTEM_DB.msg);
+            }
+            try {
+                //第一次建立Running表
+                await Running.create({ openId: openId, walletAddress: wallet.address }).fetch();
+            } catch (err) {
+                sails.log.error(new Date().toISOString(),  err);
+                return res.feedback(ResultCode.ERR_SYSTEM_DB.code, {}, ResultCode.ERR_SYSTEM_DB.msg);
+            }
+            req.session.user = createDate
+            createDate = Utils.clearPrivateInfo(createDate);
+            return res.feedback(ResultCode.REGISTERED_SUCCESSFULLY.code, createDate, ResultCode.REGISTERED_SUCCESSFULLY.msg);
         } catch (err) {
-            sails.log.error(new Date().toISOString(), req.method, req.url, err);
+            sails.log.error(new Date().toISOString(),  err);
             return res.feedback(ResultCode.ERR_SYSTEM_DB.code, {}, ResultCode.ERR_SYSTEM_DB.msg);
         }
+
     },
 
     /**
@@ -66,22 +93,28 @@ module.exports = {
      */
     login: async function(req, res) {
         try {
-            var date = req.body
-            console.log(date);
-            if (date.openId) {
-                req.session.openId = date.openId;
-                let findResult = await User.find({
-                    openId: date.openId
-                })
-                if (findResult.length !== 0) {
-                    return res.send(findResult[0].openId);
-                }
-                return res.feedback(200, {}, '请先注册！');
-            } else {
+            var openId = req.body.openId;
+            if (Utils.isNil(openId)) {
+                sails.log.error(new Date().toISOString(),  );
                 return res.feedback(ResultCode.ERR_HEADER_PARAMETERS.code, {}, ResultCode.ERR_HEADER_PARAMETERS.msg);
             }
+            try {
+                var findResult = await User.find({
+                    openId: openId
+                }).decrypt()
+            } catch (err) {
+                sails.log.error(new Date().toISOString(),  );
+                return res.feedback(ResultCode.ERR_SYSTEM_DB.code, {}, ResultCode.ERR_SYSTEM_DB.msg);
+            }
+            if (Utils.isNil(findResult[0])) {
+                sails.log.info(new Date().toISOString(),  );
+                return res.feedback(ResultCode.UNDEFINED_USER.code, {}, ResultCode.UNDEFINED_USER.msg);
+            }
+            req.session.user = findResult
+            findResult = Utils.clearPrivateInfo(findResult[0]);
+            return res.feedback(ResultCode.REGISTERED_SUCCESSFULLY.code, findResult, ResultCode.REGISTERED_SUCCESSFULLY.msg);
         } catch (err) {
-            sails.log.error(new Date().toISOString(), req.method, req.url, err);
+            sails.log.error(new Date().toISOString(),  err);
             return res.feedback(ResultCode.ERR_SYSTEM_DB.code, {}, ResultCode.ERR_SYSTEM_DB.msg);
         }
     },

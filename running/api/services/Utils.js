@@ -10,7 +10,8 @@ var atob = require('atob');
 var uuid = require('uuid');
 var sjcl = require('sjcl');
 var jwt = require('jwt-simple');
-const cons = require('crypto');
+var redis = require("redis");
+
 
 module.exports = {
     /**
@@ -107,7 +108,10 @@ module.exports = {
             }
         };
         var client_id = uuid.v1();
-        var wallet = { secret: secret, address: address };
+        var wallet = {
+            secret: secret,
+            address: address
+        };
         try {
             ApiRequest.submitPayment(wallet, payment, client_id, false, callback);
         } catch (e) {
@@ -167,7 +171,10 @@ module.exports = {
      */
     encodeToken: function(id, salt) {
         var expires = new Date().getTime() + CONST.VERIFY_TOKEN_TIME_MAX;
-        return jwt.encode({ id: id, exp: expires }, salt);
+        return jwt.encode({
+            id: id,
+            exp: expires
+        }, salt);
     },
 
     /**
@@ -188,12 +195,18 @@ module.exports = {
     clearPrivateInfo: function(userInfo) {
         if (!userInfo) return null;
         var newUserInfo = JSON.parse(JSON.stringify(userInfo));
+        delete newUserInfo.id;
+        delete newUserInfo.salt;
+        delete newUserInfo.password;
         delete newUserInfo.createdAt;
         delete newUserInfo.updatedAt;
-        delete newUserInfo.id;
-        delete newUserInfo.password;
-        delete newUserInfo.salt;
-        delete newUserInfo.tradpass;
+        delete newUserInfo.avatar;
+        delete newUserInfo.status;
+        delete newUserInfo.areaCode;
+        delete newUserInfo.channel;
+        delete newUserInfo.PCSid;
+        delete newUserInfo.mobileSid;
+        delete newUserInfo.tradePass;
         return newUserInfo;
     },
 
@@ -203,13 +216,15 @@ module.exports = {
      * @return userInfo
      */
     clearAdminInfo: function(userInfo) {
+        if (!userInfo) return null;
         var newUserInfo = JSON.parse(JSON.stringify(userInfo));
-        delete newUserInfo.createdAt;
-        delete newUserInfo.updatedAt;
-        delete newUserInfo.id;
-        delete newUserInfo.password;
-        delete newUserInfo.salt;
-        delete newUserInfo.tradpass;
+        for (var i = 0; i < newUserInfo.length; i++){
+            newUserInfo[i].sendOwner = newUserInfo[i].sendOwner.nickName;
+            newUserInfo[i].receiveOwner = newUserInfo[i].receiveOwner.nickName;
+            delete newUserInfo[i].id;
+            delete newUserInfo[i].updatedAt;
+
+        }
         return newUserInfo;
     },
 
@@ -313,22 +328,11 @@ module.exports = {
         }
         return false;
     },
-
-    //AES是一种常用的对称加密算法，加解密都用同一个密钥。crypto模块提供了AES支持，但是需要自己封装好函数，便于使用：
-    //加密  cipher意为暗号
-    aesCrypto: function(data, key) {
-        //创建一个加了秘钥的暗号
-        const cipher = cons.createCipher('aes192', key);
-        //将暗号转换成十六进制
-        var aes = cipher.update(data, 'utf-8', 'hex');
-        aes += cipher.final('hex');
-        return aes;
+    getIssuer: function(currency) {
+        if (currency === CONST.BASE_TOKEN) {
+            return ''
+        }
+        // TODO:目前只是这一个银关配置，所有代币都从这个银关出
+        return sails.config.wallet.fgate_account
     },
-    //解密
-    aesDecrypto: function(data, key) {
-        const dcipher = cons.createDecipher('aes192', key);
-        var daes = dcipher.update(data, 'hex', 'utf-8');
-        daes += dcipher.final('utf-8');
-        return daes;
-    }
-};
+}
