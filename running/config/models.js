@@ -15,8 +15,8 @@
 
 module.exports.models = {
 
-  schema: true, //严格匹配数据表的模式
-  migrate: 'alter', //允许sails修改表的结构
+  // schema: true, //严格匹配数据表的模式
+  // migrate: 'alter', //允许sails修改表的结构
   // fetchRecordsOnUpdate: true,
   attributes: {
     createdAt: {
